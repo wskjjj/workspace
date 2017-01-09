@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ball animation</title>
+	<style>
+		.ball{
+			margin-left: 0;
+			width: 40px;
+			height: 40px;
+			border-radius: 20px;
+		}
+		.ball1{
+			background: red;
+		}
+		.ball2{
+			background: yellow;
+		}
+		.ball3{
+			background: green;
+		}
+	</style>
+</head>
+<body>
+	<div id="ball1" class="ball ball1"></div>
+	<div id="ball2" class="ball ball2"></div>
+	<div id="ball3" class="ball ball3"></div>
+	<script>
+		var ball1 = document.getElementById("ball1");
+		var ball2 = document.getElementById("ball2");
+		var ball3 = document.getElementById("ball3");
+		
+		function ballAnimation(ball){
+			var marginLeft = ball.style.marginLeft = 10;
+			console.log(marginLeft);
+		}
+		ballAnimation(ball1);
+
+		// function ballAnimation(ball,distance,callback){
+		// 	setTimeout(function(){
+		// 		var marginLeft = ball.style.marginLeft + "px";
+		// 		if(marginLeft == distance){
+		// 			callback && callback();
+		// 		}
+		// 		else{
+		// 			if(marginLeft < distance){
+		// 				marginLeft++;
+		// 			}
+		// 			else{
+		// 				marginLeft--;
+		// 			}
+		// 			ball.style.marginLeft = marginLeft;
+		// 			ballAnimation(ball,distance,callback);
+		// 		}
+		// 	},500)
+		// }
+		// ballAnimation(ball1,100,function(){
+		// 	ballAnimation(ball2,200,function(){
+		// 		ballAnimation(ball3,300,function(){
+		// 			ballAnimation(ball3,150,function(){
+		// 				ballAnimation(ball2,150,function(){
+		// 					ballAnimation(ball1,150,function(){
+		// 						//
+		// 					});
+		// 				});
+		// 			});
+		// 		});
+		// 	});
+		// });
+	</script>
+</body>
+</html>

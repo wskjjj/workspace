@@ -1,0 +1,16 @@
+$fz: 16px;
+$color: #333;
+@mixin size($width,$height:$width){
+	width: $width;
+	height: $height;
+}
+
+body{
+	font-size: $fz;
+	color: $color;
+}
+
+#container{
+	font-size: $fz;
+	@include size(300px);
+}

@@ -1,0 +1,8 @@
+@mixin size($width,$height:$width){
+	width: $width;
+	height: $height;
+}
+
+#container{
+	@include size(300px);
+}

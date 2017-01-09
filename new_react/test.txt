@@ -1,0 +1,71 @@
+var gulp = require('gulp');
+var plugins = require('gulp-load-plugins')();
+
+gulp.task('webserver',function(){
+	gulp.src('./')
+		.pipe(webserver({
+			path : '/',
+			livereload : true,
+			open : true,
+			host : '10.12.2.12',
+			port : 8088
+		}));
+});
+gulp.task('js',function(){
+	var jsSrc = './lib/*.js';
+	var jsDst = './build/';
+	gulp.src(jsSrc)
+		.pipe(plugins.concat('bundle.js'))
+		.pipe(plugins.jshint())
+		.pipe(plugins.uglify())
+		//.pipe(plugins.rename({suffix : '.min'}))
+		.pipe(gulp.dest(jsDst));
+	gulp.task('./build/*.js',function(event){
+		console.log('files:【' + event.path + '】was【' + event.type + '】,running task...');
+	});
+});
+gulp.task('css',function(){
+	var cssSrc = './lib/*.css';
+	var cssDst = './build/';
+	gulp.src(cssSrc)
+		.pipe(plugins.concat('build.css'))
+		//.pipe(plugins.cleanCSS())
+		.pipe(gulp.dest(cssDst));
+});
+gulp.task('sass',function(){
+	var scssSrc = './lib/*.scss';
+	var scssDst = './build/';
+	gulp.src(scssSrc)
+		.pipe(plugins.concat('main.css'))
+		.pipe(plugins.rubySass())
+		.pipe(gulp.dest(scssDst));
+});
+gulp.task('html',function(){
+	var htmlSrc = './lib/*.html';
+	var htmlDst = './';
+	gulp.src(htmlSrc)
+		.pipe(plugins.rename('index.html'))
+		.pipe(gulp.dest(htmlDst));
+	gulp.watch('./*.html',function(event){
+		console.log('files:【' + event.path + '】was【' + event.type + '】,running task...');
+	})
+});
+
+gulp.task('default',['webserver','js','html']);
+// gulp.task('watch',function(){
+// 	gulp.watch('./lib/*',['html']);
+// });
+// gulp.task('default',['connect','watch']);
+
+// gulp.task('default',['webserver','js'],function(){
+// 	var server = gulp.watch(['./build/*','./lib/*','*.html']);
+// 	server.on('change',function(event){
+// 		console.log('files:【' + event.path + '】was【' + event.type + '】,running task...');
+// 	})
+// });
+
+// gulp.task('default',['webserver','js','css'],function(){
+// 	gulp.watch(['./lib/*.js','./lib/*.css','./lib/*.scss','./*.html'],function(event){
+// 		console.log('files:【' + event.path + '】was【' + event.type + '】,running task...');
+// 	});
+// });

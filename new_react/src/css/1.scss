@@ -1,0 +1,12 @@
+$fz: 16px;
+$color: #333;
+@mixin size($width,$height:$width){
+	width: $width;
+	height: $height;
+}
+
+.main{
+	font-size: $fz;
+	color: $color;
+	@include size(60px);
+}
