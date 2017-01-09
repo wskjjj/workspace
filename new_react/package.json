@@ -11,8 +11,12 @@
   "author": "xule",
   "license": "ISC",
   "devDependencies": {
+    "babel-core": "^6.21.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
     "del": "^2.2.2",
     "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
     "gulp-cache": "^0.4.5",
     "gulp-clean-css": "^2.3.2",
     "gulp-concat": "^2.6.1",
