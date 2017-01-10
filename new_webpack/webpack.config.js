@@ -11,10 +11,11 @@ module.exports = {
 	},
 	devServer : {
 		contentBase : './public',
-		port : 7777,
+		port : 8883,
 		colors : true,
 		inline : true,
-		historyApiFallback : true
+		historyApiFallback : true,
+		host: '10.12.2.12'
 	},
 	module : {
 		loaders : [
