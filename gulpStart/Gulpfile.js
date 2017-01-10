@@ -10,19 +10,30 @@ const path = {
 	htmlDst: './'
 }
 
+//connect
+gulp.task('connect',() => {
+	plugins.connect.server({
+		root: './',
+		port: 8880,
+		livereload: true,
+		host: '10.12.2.12'
+	});
+});
 //js
 gulp.task('js',() => {
 	gulp.src(path.jsSrc)
 		.pipe(plugins.concat('main.js'))
 		.pipe(plugins.uglify())
 		.pipe(plugins.rename({suffix: '.min'}))
-		.pipe(gulp.dest(path.jsDst));
+		.pipe(gulp.dest(path.jsDst))
+		.pipe(plugins.connect.reload());
 });
 //html
 gulp.task('html',() => {
 	gulp.src(path.htmlSrc)
 		.pipe(plugins.rename('index.html'))
-		.pipe(gulp.dest(path.htmlDst));
+		.pipe(gulp.dest(path.htmlDst))
+		.pipe(plugins.connect.reload());
 });
 
 //watch
@@ -34,4 +45,4 @@ gulp.task('watch',() => {
 });
 
 //default
-gulp.task('default',['watch','js','html']);
+gulp.task('default',['js','html','watch','connect']);

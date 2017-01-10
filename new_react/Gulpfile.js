@@ -10,7 +10,7 @@ gulp.task('webserver',function(){
 			open : true,
 			livereload : true,
 			host : '10.12.2.12',
-			port : 8885
+			port : 8882
 		}));
 });
 //connect
@@ -19,7 +19,7 @@ gulp.task('connect',function(){
 		root : './',
 		livereload : true,
 		host : '10.12.2.12',
-		port : 8885
+		port : 8882
 	});
 });
 //js

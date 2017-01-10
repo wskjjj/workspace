@@ -67,7 +67,7 @@ module.exports = (grunt) => {
 					base: './',
 					open: true,
 					livereload: true,
-					port: 8899,
+					port: 8881,
 					hostname: '10.12.2.12'
 				}
 			}
