@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>react</title>
+	<script src='js/react.js'></script>
+	<script src='js/react-dom.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+</head>
+<body>
+	<div id="container"></div>
+	<div id="MyCount"></div>
+	<div id="car"></div>
+	<div id="car2"></div>
+	<div id="child"></div>
+	<div id="example"></div>
+
+
+	<script type='text/babel'>
+		var MessageBox = React.createClass({
+			render : function(){
+				return (<div>Hello {this.props.name}</div>)
+			 }
+		});
+		ReactDOM.render(
+			<MessageBox name='World' />,
+			document.getElementById('container')
+		);
+		
+		/*--------------------------------------*/
+		/*var MyCount = React.createClass({
+			getInitialState : function(){
+				return {
+					count : 0
+				}
+			},
+			handlenClick : function(){
+				this.setState({
+					count : this.state.count + 1
+				})
+			},
+			render : function(){
+				return (
+					<div><button onClick={this.handlenClick}>Click me! Number of Clicks:{this.state.count}</button></div>
+				)
+			}
+		});*/
+		var MyCount = React.createClass({
+			getDefaultProps : function(){
+				return {
+					count : 0
+				}
+			},
+			getInitialState : function(){
+				return {
+					count : this.props.count
+				}
+			},
+			handlenClick : function(){
+				this.setState({
+					count : this.state.count + 1
+				})			
+			},
+			render : function(){
+				return (<div><button onClick={this.handlenClick}>Click me! Number of Clicks:{this.state.count}</button></div>)
+
+			}
+		});
+		ReactDOM.render(
+			<MyCount />,
+			document.getElementById('MyCount')
+		);
+		
+		/*--------------------------------------*/
+		var MsgShow = React.createClass({
+			render : function(){
+				return (
+					<p>随机出现的组件名：{this.props.name}，组件名的索引：{this.props.index}</p>
+				)
+			}
+		});
+		setInterval(function(){
+			var MsgArray = ['Benzi','BMW','Audi','volvo'];
+			var msgIndex = Math.floor(Math.random() * 4);
+			var msgArray = MsgArray[msgIndex];
+			ReactDOM.render(
+				<MsgShow name={msgArray} index={msgIndex} />,
+				document.getElementById('car')
+			)
+		},1000);
+		
+		/*--------------------------------------*/
+		var ParentCarName = React.createClass({
+			getDefaultProps : function(){
+				return {
+					name : '--',
+					index : '--'
+				}
+			},
+			getInitialState : function(){
+				return {
+					name : this.props.name,
+					index : this.props.index
+				}
+			},
+			handleClick : function(){
+				var CarsArray = ['Benzi','BMW','Audi','volvo'];
+				var i = Math.floor(Math.random() * 4);
+				var car = CarsArray[i];
+				this.setState({
+					name : car,
+					index : i
+				})
+			},
+			render : function(){
+				return (
+					<div>
+						<p>点击按钮之后随机出现的汽车名称：{this.state.name}</p>
+						<p><button onClick={this.handleClick}>点击</button></p>
+						<p><CarIndex index={this.state.index} /></p>
+					</div>
+				)
+			}
+		});		
+		var CarIndex = React.createClass({
+			render : function(){
+				return <p>汽车索引：{this.props.index}</p>
+			}
+		});
+		ReactDOM.render(
+			<ParentCarName />,
+			document.getElementById('car2')
+		);
+
+		/*--------------------------------------*/
+		/*
+		var NodeList = React.createClass({
+			render : function(){
+				return (
+					<div>
+						<ol>
+							{
+								React.Children.map(this.props.children,function(child){
+									return <li>{child}</li>
+								})
+							}
+						</ol>
+					</div>
+				)
+			}
+		});
+		ReactDOM.render(
+			<NodeList>
+				<span>Hello</span>
+				<span>World</span>
+			</NodeList>,
+			document.getElementById('child')
+		)
+		*/
+		
+		/*--------------------------------------*/
+		var LikeButton = React.createClass({
+		  getInitialState: function() {
+		    return {liked: false};
+		  },
+		  handleClick: function() {
+		    //传入key-value键值对的{}对象给setState改变state
+		    this.setState({liked: !this.state.liked});//state改变后render重新渲染
+		  },
+		  render: function() {
+		    var text = this.state.liked ? 'like' : 'haven\'t liked';
+		    return (
+		      <p onClick={this.handleClick}>
+		        You {text} this. Click to toggle.
+		      </p>
+		    );
+		  }
+		});
+
+		ReactDOM.render(
+		  <LikeButton />,
+		  document.getElementById('example')
+		);
+	</script>
+</body>
+</html>

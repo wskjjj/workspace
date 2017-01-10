@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>react factory</title>
+	<script src='js/react.min.js'></script>
+	<script src='js/react-with-addons.min.js'></script>
+	<script src='js/react-dom.min.js'></script>
+	<script src='js/browser.min.js'></script>
+</head>
+<body>
+	<div id="container"></div>
+	<div id="text"></div>
+	<div id="myprops"></div>
+	<div id="mymixin"></div>
+	<div id="test"></div>
+
+	<script type='text/babel'>
+		//React.createFactory
+		//var child1 = React.createElement('li',null,'First Text');
+		//var child2 = React.createElement('li',null,'Second Text');
+		//var root = React.createElement('ul',{className:'my-list'},child1,child2);
+
+		//var Factory = React.createFactory('li');
+		//var child1 = Factory(null,'New First Text');
+		//var child2 = Factory(null,'New Second Text');
+		////var root = React.createElement('ul',{className:'my-list'},child1,child2);
+		//var root = React.DOM.ul({className:'my-list'},child1,child2);
+		
+		var Rli = React.createClass({
+			render : function(){
+				return (
+					<li>{this.props.text}</li>
+				)
+			}
+		});
+		var Factory = React.createFactory(Rli);
+		var child1 = Factory({text:'First Text'});
+		var child2 = Factory({text:'Second Text'});
+		var root = React.createElement('ul',{className:'my-list'},child1,child2);
+		
+		ReactDOM.render(root,document.getElementById('container'));
+		//ReactDOM.render(React.createElement('ul',{className:'list'},React.createElement('li',null,'My Li')),document.body);
+
+		//事件绑定
+		var LinkBtn = React.createClass({
+			getInitialState : function(){
+				return {
+					liked : false
+				}
+			},
+			handleClick : function(e){
+				e.preventDefault();
+				e.stopPropagation();
+
+				this.setState({
+					liked : !this.state.liked
+				})
+			},
+			render : function(){
+				var text = this.state.liked ? 'did' : 'did not';
+				return (
+					<p onClick={this.handleClick}>You {text} click!</p>
+				)
+			}
+		});
+		ReactDOM.render(<LinkBtn /> , document.getElementById('text'));
+
+		//getDefaultProps
+		var MyDefault = React.createClass({
+			getDefaultProps : function(){
+				return {
+					name : 'Jack'
+				}
+			},
+			render : function(){
+				return (
+					<p>我的名字：{this.props.name}</p>
+				)
+			}
+		});
+		ReactDOM.render(<MyDefault />,document.getElementById('myprops'));
+
+		//Mixins
+		var SetIntervalMixin = {
+			componentWillMount : function(){
+				this.interval = [];
+			},
+			setInterval : function(){
+				this.interval.push(setInterval.apply(null,arguments));
+			},
+			componentWillUnmount : function(){
+				this.interval.map(clearInterval);
+			}
+		};
+		var MyMixin = React.createClass({
+			mixins : [SetIntervalMixin],
+			getInitialState : function(){
+				return {
+					second : 0
+				}
+			},
+			componentDidMount : function(){
+				this.setInterval(this.tick,1000);
+			},
+			tick : function(){
+				this.setState({
+					second : this.state.second + 1
+				});
+			},
+			render : function(){
+				return (
+					<div>
+						React has been running for {this.state.second} seconds.
+					</div>
+				)
+			}
+		});
+		ReactDOM.render(<MyMixin />,document.getElementById('mymixin'));
+
+		//服务器端
+		var MyComponent = React.createClass({
+			render : function(){
+				return (
+					<div>{this.props.name}</div>
+					//<div>{Math.random()}</div>
+				)
+			}
+		});
+		//var result1 = React.renderToString(<MyComponent />);
+		//var result2 = React.renderToString(<MyComponent />);
+		//React.renderToString(<MyComponent name={Math.random()} />);
+		ReactDOM.render(<MyComponent name={Math.floor(Math.random()*3)} />,document.body);
+
+
+		var First = React.createClass({
+			getInitialState : function(){
+				return {
+					name : 'Jack'
+				}
+			},
+			render : function(){
+				return (<Second name={this.state.name} />)
+			}
+		});
+		var Second = React.createClass({
+			render : function(){
+				return (<div>{this.props.name}</div>)
+			}
+		})
+		ReactDOM.render(<First />,document.getElementById('test'));
+	</script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>react 动画</title>
+	<script src='js/react.min.js'></script>
+	<script src='js/react-with-addons.min.js'></script>
+	<script src='js/react-dom.min.js'></script>
+	<script src='js/browser.min.js'></script>
+	<script src='http://cdn.dacai.cn/jquery.js'></script>
+    <!-- <script src="https://npmcdn.com/react@15.3.1/dist/react.min.js"></script>
+    <script src="https://npmcdn.com/react@15.3.1/dist/react-with-addons.min.js"></script>
+	<script src="https://npmcdn.com/react-dom@15.3.1/dist/react-dom.min.js"></script>
+    <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script> -->
+    <style>
+    	.example-enter {
+			opacity: 0.01;
+			transform: scale(1.2);
+			transition: opacity .5s ease-in;
+		}
+
+		.example-enter.example-enter-active {
+			opacity: 1;
+			transform: scale(1);
+		}
+        .example-leave {
+			opacity: 1;
+			transition: opacity .5s ease-in;
+		}
+
+		.example-leave.example-leave-active {
+			opacity: 0.01;
+		}
+
+		li{
+			list-style: none;
+		}
+
+        li span{
+        	vertical-align: middle;
+        	color: red;
+        }
+
+        .demo{width: 510px;height: 250px;margin: 0 auto;position: relative;}
+        .demo .pics{width: 510px;height: 250px;overflow: hidden;position: relative;}
+        .demo .pics .div_ul{height: 250px;position: absolute;}
+        .demo .pics ul{display: block;margin: 0;padding: 0;}
+        .demo .pics .div_ul li{display: block;width: 510px;height: 250px;float: left;}
+        .demo .btns a{display: block;width: 34px;height: 34px;line-height: 34px;background: #eee;opacity: .5;color: #000;text-align: center;text-decoration: none;position: absolute;top: 50%;margin-top: -17px;}
+        .demo .btns a:hover{opacity: .8;}
+        .demo .btns a.pic_left{float: left;left: 2px;}
+        .demo .btns a.pic_right{float: right;right: 2px;}
+    </style>
+</head>
+<body>
+	<div id="container"></div>
+	<div id="positioner"></div>
+
+	<script type='text/babel'>
+		var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+		
+		var BookStore = React.createClass({
+			getInitialState : function(){
+				return {
+					items : [],
+					liked : false,
+					value : ''
+				}
+			},
+			handleChange : function(event){
+				this.setState({
+					value : event.target.value
+				})
+			},
+			handleAdd : function(){
+				if(!this.state.value){
+					alert('不能为空！')
+				}
+				else{
+					this.state.items.push(this.state.value)
+					this.state.value = '';
+				}
+				this.setState({
+					liked : !this.state.liked
+				});
+				console.log(this.state.items)
+
+			},
+			handleRemove : function(i){
+				this.state.items.splice(i,1);
+				this.setState({
+					liked : !this.state.liked
+				});
+				console.log(this.state.items)
+			},
+			render : function(){
+				return (
+					<div>
+						<input type='text' value={this.state.value} onChange={this.handleChange} />
+						<button type='button' onClick={this.handleAdd}>添加</button>
+						<ol>
+							{this.state.items.map(function(items,i){
+								return <li key={'items'+i}>{items} <span onClick={this.handleRemove.bind(this,i)}>×</span></li>
+							}.bind(this))}
+						</ol>
+					</div>
+				)
+			}
+		});
+		/*
+		var BookInput = React.createClass({
+			render : function(){
+				return (
+					<div>
+						<input type='text' onChange={this.props.onChange} value={this.props.value} />
+					</div>
+				)
+			}
+		});
+		var BookButton = React.createClass({
+			render : function(){
+				return (
+					<div>
+						<button type='button' onClick={this.props.onClick}>点击添加</button>
+					</div>
+				)
+			}
+		});
+		var BookStore = React.createClass({
+			propTypes : function(){
+				transitionName : React.PropTypes.string.isRequired
+			},
+			getInitialState : function(){
+				return {
+					items : [],
+					value : '',
+					isClick : false
+				}
+			},
+			handleChange : function(event){
+				this.setState({
+					value : event.target.value
+				});
+			},
+			handleAdd : function(){
+				if(!this.state.value){
+					alert('不能为空!');
+				}
+				else{
+					this.state.items.push(this.state.value);
+					this.state.value = '';
+				}
+				this.setState({
+					isClick : !this.state.isClick
+				})
+			},
+			handleRemove : function(i){
+				this.state.items.splice(i,1);
+				this.setState({
+					isClick : !this.state.isClick
+				})
+			},
+			render : function(){
+				return (
+					<div>
+						<BookInput onChange={this.handleChange} value={this.state.value} />
+						<BookButton onClick={this.handleAdd} />	
+						<ReactCSSTransitionGroup transitionName='example' transitionEnterTimeout={500} transitionLeaveTimeout={300} >					
+							<ol>
+								{this.state.items.map(function(items,i){
+									return (
+											<li key={'items'+i}>{items} <span onClick={this.handleRemove.bind(this,i)}>×</span></li>
+											)
+								}.bind(this))}
+							</ol>
+						</ReactCSSTransitionGroup>
+					</div>
+				)
+			}
+		});
+		*/
+  		ReactDOM.render(<BookStore />,document.getElementById('container'));
+
+  		//图片移动
+		var newIndex = 0;
+  		var Positioner = React.createClass({
+  			getInitialState : function(){
+  				return {
+  					pics : [
+  						['http://cdn.dacai.cn/uploadimg/2016-8/046f99ad-00bf-4c74-81ac-4266e4a16074.jpg','第一张图片'],
+						['http://cdn.dacai.cn/uploadimg/2016-7/f1e863d1-1be2-4742-a5f5-6cb9b32dea5e.jpg','第二张图片'],
+						['http://cdn.dacai.cn/uploadimg/2015-2/aebd169d-d202-4115-a24f-dc77489b8676.jpg','第三张图片']
+  					],
+  					position : 0
+  				}
+  			},
+  			handleChangeLeft : function(){
+  				var lis = this.state.pics;
+  				if(newIndex == lis.length - 1){
+  					newIndex = 0;
+  				}
+  				else{
+  					newIndex++;
+  				}
+  				var _position = - newIndex * 510 + 'px';
+
+				this.setState({
+					position : _position
+				});				
+  			},
+  			handleChangeRight : function(){
+				var lis = this.state.pics;
+  				if(newIndex == lis.length - 1){
+  					newIndex--;
+  				}
+  				else{
+  					newIndex = lis.length -1;
+  				}
+  				var _position = - newIndex * 510 + 'px';
+
+				this.setState({
+					position : _position
+				});	
+  			},
+  			componentDidMount : function(){
+  				var lis = document.getElementsByTagName('li');
+  				var u_width = lis.length * 510 + 'px';
+  				document.getElementsByClassName('div_ul')[0].style.width = u_width;
+
+  				var t;
+  				t = setInterval(this.handleChangeLeft,2000);
+  				var uls = document.getElementsByClassName('div_ul');
+				var lis = uls[0].getElementsByTagName('li');
+				/*
+  				uls[0].onmouseover = function(){
+  					clearInterval(t);
+  				}
+  				uls[0].onmouseout = function(){
+  					t = setInterval(function(){
+  						if(newIndex == lis.length - 1){
+		  					newIndex = 0;
+		  				}
+		  				else{
+		  					newIndex++;
+		  				}
+		  				uls[0].style.left = - newIndex * 510 + 'px';
+  					},2000);
+  				}
+				*/
+  				for(var i=0;i<lis.length;i++){
+  					(function(i){
+  						lis[i].onmouseover = function(){
+	  						clearInterval(t);
+	  						console.log(i);
+	  					}
+  					})(i);
+  					(function(i){
+  						lis[i].onmouseout = function(){
+  							t = setInterval(function(){
+				  				if(newIndex == lis.length - 1){
+				  					newIndex = 0;
+				  				}
+				  				else{
+				  					newIndex++;
+				  				}
+				  				uls[0].style.left = - newIndex * 510 + 'px';
+  							},2000);
+							console.log(i+1)
+  						}
+  					})(i);  					
+  				}
+				
+  			},
+  			render : function(){
+  				return (
+					<div>
+						<div className='demo'>
+							<div className='pics'>
+								<div className='div_ul' ref='pics' style={{left:this.state.position}}>
+									<ul>
+										{this.state.pics.map(function(items,i){
+											return <li key={'items'+i} onMouseOver={this.handleOver}><img src={items[0]} title={items[1]} /></li>
+										}.bind(this))}
+									</ul>
+								</div>
+							</div>
+							<div className='btns'>
+								<a href='javascript:void(0)' className='pic_left' onClick={this.handleChangeLeft}> &lt;&lt; </a>
+								<a href='javascript:void(0)' className='pic_right' onClick={this.handleChangeRight}> &gt;&gt; </a>							
+							</div>
+						</div>
+					</div>
+  				)
+  			}
+  		});
+  		ReactDOM.render(<Positioner />,document.getElementById('positioner'));
+	</script>
+</body>
+</html>

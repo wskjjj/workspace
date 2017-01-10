@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>react-02</title>
+	<script src='js/react.js'></script>
+	<script src='js/react-dom.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+    <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js'></script> -->
+</head>
+<body>
+	<div id="container"></div>
+	<div id="timer"></div>
+
+	<script type='text/babel'>
+		var BtnText = React.createClass({
+			handleClick : function(event){
+				var tip = ReactDOM.findDOMNode(this.refs.tip);
+				if(tip.style.display === 'none'){
+					tip.style.display = 'block';
+				}
+				else{
+					tip.style.display = 'none';
+				}
+
+				event.preventDefault();
+				event.stopPropagation();
+			},
+			render : function(){
+				return (
+					<div>
+						<button type="button" onClick={this.handleClick}>点击按钮</button><br/>
+						<span ref='tip'>文字显示隐藏</span>
+					</div>
+				)
+			}
+		});
+		var InputText = React.createClass({
+			getInitialState : function(){
+				return {
+					inputValue : ''
+				}
+			},
+			handleInput : function(event){
+				this.setState({
+					inputValue : event.target.value
+				});				
+				event.preventDefault();
+				event.stopPropagation();
+			},
+			clearInput : function(event){
+				this.setState({inputValue : ''},function(){
+					this.refs.inputTxt.getDOMNode().value = '';
+				})
+				event.preventDefault();
+				event.stopPropagation();
+			},
+			render : function(){
+				return (
+					<div>
+						<input type="text" onChange={this.handleInput} ref='inputTxt' /> <button type="button" onClick={this.clearInput}>清除文字</button><br/>
+						<span>{this.state.inputValue}</span>
+					</div>
+				)
+			}
+		});
+		ReactDOM.render(
+			<div>
+				<BtnText /><br/><br/>
+				<InputText />
+			</div>,
+			document.getElementById('container')			
+		)
+
+		var Timer = React.createClass({
+			getInitialState : function(){
+				return {
+					second : 0
+				}
+			},
+			handleTick : function(){
+				this.setState({
+					second : this.state.second + 1
+				});
+			},	
+			componentDidMount : function(){
+				var t = setInterval(this.handleTick,1000);
+			},		
+			componentWillUnmount : function(){
+				clearInterval(t);
+			},
+			render : function(){
+				return (
+					<div>
+						<p>点击按钮 seconds:{this.state.second}s</p>
+						<p><button type='button' onClick={this.handleTick}>点击</button></p><br/>
+						<p>setInterval seconds:{this.state.second}s</p>
+					</div>
+				)
+			}
+		});
+		ReactDOM.render(<Timer />,document.getElementById('timer'));
+	</script>
+</body>
+</html>

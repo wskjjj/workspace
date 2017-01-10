@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>react 表单</title>
+	<script src='js/react.min.js'></script>
+	<script src='js/react-with-addons.min.js'></script>
+	<script src='js/react-dom.min.js'></script>
+	<script src='js/browser.min.js'></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.3/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.3/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script> -->
+</head>
+<body>
+	<div id="container"></div>
+	<div id="formInput"></div>
+	<div id="city"></div>
+	<div id="refTxt"></div>
+	<div id="select"></div>
+	<div id="checkbox"></div>
+	<div id="radio"></div>
+	<div id="myform"></div>
+	<div id="nodelist"></div>
+	<div id="mystate"></div>
+
+	<script type='text/babel'>
+		//计时器
+		var Hello = React.createClass({
+			getInitialState : function(){
+				return {
+					time : 0,
+					name : 'World'
+				}
+			},
+			handleTime : function(){
+				this.setState({
+					time : this.state.time + 1
+				});
+			},
+			componentDidMount : function(){				
+				this._time = setInterval(this.handleTime,1000);
+			},
+			componentWillUnmount : function(){
+				clearInterval(this._time);
+			},
+			render : function(){
+				return <p>Hello {this.state.name} {this.state.time}</p>
+			}
+		});
+		ReactDOM.render(<Hello />,document.getElementById('container'));
+
+		//表单输入与清除
+		var InputText = React.createClass({
+			getInitialState : function(){
+				return {
+					value : ''
+				}
+			},
+			handleChange : function(e){
+				var value = e.target.value;
+				if(value.length > 10){
+					this.refs.tip.getDOMNode().innerHTML = '文字超出长度';
+				}
+				else{
+					this.refs.tip.getDOMNode().innerHTML = '';
+				}
+				this.setState({
+					value : value
+				});
+				e.preventDefault();
+				e.stopPropagation();
+			},
+			handleClick : function(){
+				this.setState({
+					value : ''
+				},function(){
+					//this.refs.txt.getDOMNode().value = '';
+					ReactDOM.findDOMNode(this.refs.txt).value = ''
+				});
+			},
+			render : function(){
+				return (
+					<div>
+						<p><input type="text" ref='txt' onChange={this.handleChange} /> <button type="button" onClick={this.handleClick}>清除</button></p>
+						<p><span>{this.state.value}</span><span ref='tip'></span></p>	
+ 					</div>
+				)  
+			}
+		});
+		ReactDOM.render(<InputText />,document.getElementById('formInput'));
+
+		//动态添加4个li，点击每个li显示对应的文字
+
+		//表单。无约束组件
+		var SubmitHandle = React.createClass({
+			subHandle : function(event){
+				var tip = this.refs.refTxt.value;
+				alert(tip);
+				event.preventDefault();
+				event.stopPropagation();
+			},
+			render : function(){
+				return (
+					<div>
+						<form onSubmit={this.subHandle}>
+							<input type='text' ref='refTxt' defaultValue='Hello World' /> <button type='submit'>确定</button>
+						</form>
+					</div>
+				)
+			}
+		});
+		ReactDOM.render(<SubmitHandle />,document.getElementById('refTxt'));
+		
+		//表单。select选择
+		var MySelect = React.createClass({
+			getInitialState : function(){
+				return {
+					city : '--'
+				}
+			},
+			handleChange : function(event){
+				this.setState({
+					city : event.target.value
+				});
+			},
+			render : function(){
+				return (
+					<div>
+						<br/>
+						<form onSubmit={this.handleSubmit}>
+							<select onChange={this.handleChange}>
+								<option value='--' defaultSelect>========</option>
+								<option value='北京'>==北京==</option>
+								<option value='广州'>==广州==</option>
+								<option value='上海'>==上海==</option>
+								<option value='深圳'>==深圳==</option>
+							</select>&nbsp;
+							你选中的城市是：{this.state.city}
+						</form>
+					</div>
+				)
+			}
+		});
+		ReactDOM.render(<MySelect />,document.getElementById('select'));
+
+		//表单。checkbox选择
+		var MyCheckbox = React.createClass({
+			getInitialState : function(){
+				return {
+					radioCity : '--',
+					checkboxCity : '--',
+					options : [
+						{
+							value : '北京',
+							checked : false
+						},
+						{
+							value : '上海',
+							checked : false
+						},
+						{
+							value : '广州',
+							checked : false
+						},
+						{
+							value : '深圳',
+							checked : false
+						}
+					],
+					items : [],
+					liked : false
+				}
+			},
+			handleRadioChange : function(event){
+				event.stopPropagation();
+
+				this.setState({
+					radioCity : event.target.value
+				});
+			},
+			handleCheckboxChange : function(index,event){
+				event.stopPropagation();
+				
+				var opt = this.state.options[index];
+				if(opt.checked){
+					opt.checked = false;
+					this.state.items.splice(index,1);
+					console.log(opt.checked,opt.value,this.state.items.length);
+				}
+				else{
+					opt.checked = true;
+					this.state.items.push(opt.value);
+					console.log(opt.checked,opt.value,this.state.items.length);
+				}
+				this.setState({
+					liked : !this.state.liked
+				});
+			},
+			render : function(){
+				return (
+					<div>
+						<br/>
+						<form style={{float:'left',width:'180px'}}>
+							{this.state.options.map(function(item,index){
+								return (	
+									<div key={'rky'+index}>							
+										<label htmlFor={'radio'+index} ><input type='radio' id={'radio'+index} name='radio' value={item.value} onChange={this.handleRadioChange} />{item.value}</label>
+									</div>							
+								)
+							}.bind(this))}							
+							<p>你选中的城市是：{this.state.radioCity}</p>
+						</form>
+						<form style={{float:'left',marginLeft:'50px'}}>
+							{this.state.options.map(function(item,index){
+								return (	
+									<div key={'ckey'+index}>							
+										<label htmlFor={'checkbox'+index} ><input type='checkbox' id={'checkbox'+index} checked={item.checked} value={item.value} onChange={this.handleCheckboxChange.bind(this,index)} />{item.value}</label>
+									</div>							
+								)
+							}.bind(this))}							
+							<p>你选中的城市是：{this.state.items.map(function(child,i){
+								return (
+									<span key={'child'+i}>{child}</span>
+								)
+							}.bind(this))}</p>
+						</form>
+						<div style={{clear:'both'}}></div>
+						<br/>
+					</div>
+				)
+			}
+		});
+		ReactDOM.render(<MyCheckbox />,document.getElementById('checkbox'));
+
+		//多个表单元素与change处理器
+		var MyForm = React.createClass({
+			getInitialState : function(){
+				return {
+					username : '',
+					gender : '男',
+					checked : true
+				}		
+			},
+			handleBindChange : function(name,event){
+				var newState = {};
+				newState[name] = name == 'checked' ? event.target.checked : event.target.value;
+				this.setState(newState,null);
+			},
+			handleNameChange : function(event){
+				var name = event.target.name;
+				var newState = {};
+				newState[name] = name == 'checked' ? event.target.checked : event.target.value;
+				this.setState(newState,null);
+			},
+			submitBindHandler : function(){
+				console.log(this.state);
+			},
+			submitNameHandler : function(){
+				console.log(this.state);
+			},
+			render : function(){				
+				return (
+					<div>
+						<form onSubmit={this.submitBindHandler} style={{float:'left',width:'180px'}}>
+							<p>====bind复用====</p>
+							<label >用户名:</label> 
+							<input type='text' style={{width:'100px'}} value={this.state.username} onChange={this.handleBindChange.bind(this,'username')} /><br/><br/>
+							<select value={this.state.gender} onChange={this.handleBindChange.bind(this,'gender')}>
+								<option value='男'>男</option>
+								<option value='女'>女</option>
+							</select><br/><br/>		               			
+                			<label htmlFor="cbox1"><input id="cbox1" type="checkbox" checked={this.state.checked} onChange={this.handleBindChange.bind(this,'checked')} />同意用户协议</label><br/><br/>
+							<button type='submit'>确定</button>
+						</form>						
+						<form onSubmit={this.submitNameHandler} style={{float:'left',marginLeft:'50px'}}>
+							<p>====name复用====</p>
+							<label >用户名:</label> 
+							<input type='text' style={{width:'100px'}} value={this.state.username} onChange={this.handleNameChange} name='username' /><br/><br/>
+							<select value={this.state.gender} onChange={this.handleNameChange} name='gender'>
+								<option value='男'>男</option>
+								<option value='女'>女</option>
+							</select><br/><br/>		               			
+                			<label htmlFor="cbox2"><input id="cbox2" type="checkbox" checked={this.state.checked} onChange={this.handleNameChange} name='checked' />同意用户协议</label><br/><br/>
+							<button type='submit'>确定</button>
+						</form>
+						<div style={{clear:'both'}}></div>
+					</div>
+				)
+			}
+		});
+		ReactDOM.render(<MyForm />,document.getElementById('myform'));
+
+		//this.props.children
+		var NodeList = React.createClass({
+			render : function(){
+				return (
+					<ol>
+						{							
+							React.Children.map(this.props.children,function(child,i){
+								return <li key={'li_1'+i}>{child}</li>
+							})
+							/*
+							this.props.children.forEach(function(child,i){
+								return <li key={'li_2'+i}>{child}</li>
+							});
+							*/
+						}
+					</ol>
+				)
+			}
+		});
+		ReactDOM.render(
+			<NodeList>
+				<span>node</span>
+				<span>node</span>
+			</NodeList>,
+			document.getElementById('nodelist')
+		);
+
+		//state
+		var MyState = React.createClass({			
+			getInitialState : function(){
+				return {
+					my_radio : 'A'
+				}
+			},
+			submitHandler1 : function(){
+				alert(this.refs.sel.value);
+				//alert(ReactDOM.findDOMNode(this.refs.sel).value);
+			},
+			submitHandler2 : function(){
+				alert(this.state.my_radio);
+			},
+			handleChange : function(event){
+				this.setState({
+					my_radio : event.target.value
+				});
+			},
+			render : function(){
+				return (
+					<div>
+						<form onSubmit={this.submitHandler1}>
+							<select ref='sel' defaultValue='A'>
+								<option value='A'>First Question</option>
+								<option value='B'>Second Question</option>
+								<option value='C'>Third Question</option>
+							</select>&nbsp;
+							<button type='submit'>确定</button>
+						</form><br/>
+						<form onSubmit={this.submitHandler2}>
+							<select name='my_radio' value={this.state.my_radio} onChange={this.handleChange} >
+								<option value='A'>First Question</option>
+								<option value='B'>Second Question</option>
+								<option value='C'>Third Question</option>
+							</select>&nbsp;
+							<button type='submit'>确定</button>
+						</form>
+					</div>
+				)
+			}
+		});
+		ReactDOM.render(<MyState />,document.getElementById('mystate'));
+	</script>
+</body>
+</html> 
