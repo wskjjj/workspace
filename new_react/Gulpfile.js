@@ -1,6 +1,10 @@
 var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')();
-var rename = require('gulp-rename');
+var reactify = require('reactify');
+var browserify = require('browserify');
+var shim = require('browserify-shim');
+var babelify = require('babelify');
+var source = require('vinyl-source-stream');
 
 //webserver
 gulp.task('webserver',function(){
@@ -24,25 +28,28 @@ gulp.task('connect',function(){
 });
 //js
 gulp.task('js',function(){
-	var jsSrc = './src/**/js2.js';
+	var jsSrc = './src/**/*.js';
 	var jsDst = './dist';
 	gulp.src(jsSrc)
 		.pipe(plugins.concat('main.js'))
 		//.pipe(plugins.uglify())	
-		.pipe(plugins.babel({presets: ['react','es2015']}))	
+		//.pipe(plugins.babel({presets: ['react','es2015']}))	
 		.pipe(plugins.rename({suffix : '.min'}))
 		.pipe(gulp.dest(jsDst))
 		.pipe(plugins.connect.reload());
 });
-//babel
-gulp.task('babel',function(){
-	var babelSrc = './src/**/*.js';
+//browserify
+gulp.task('browserify',function(){
+	var babelSrc = ['./src/js/js1.js','./src/js/js2.js'];
 	var babelDst = './dist';
-	gulp.src(babelSrc)
-		.pipe(plugins.rename('babel.js'))
-		.pipe(plugins.babel({presets: ['react','es2015']}))
-		.pipe(gulp.dest(babelDst))
-		.pipe(plugins.connect.reload());
+	browserify(babelSrc)
+				// .transform(babelify,{presets: ['es2015','react']})
+				.transform(reactify,{presets: ['es2015','react']})
+				.transform(shim)
+				.bundle()
+				.pipe(source('babel.js'))
+				.pipe(gulp.dest(babelDst))
+				.pipe(plugins.connect.reload());
 });
 //css
 gulp.task('css',function(){
@@ -101,7 +108,7 @@ gulp.task('html',function(){
 gulp.task('watch',function(){
 	//gulp.watch('./src/**/*.*',['html','css','js']);
 
-	var server = gulp.watch('./src/**/*',['html','css','js']);
+	var server = gulp.watch('./src/**/*',['html','js','css','browserify']);
 	server.on('change',function(event){
 		console.log('path:【' + event.path + '】was【' + event.type + '】running task...' );
 	});
@@ -112,4 +119,4 @@ gulp.task('watch',function(){
 });
 
 //default
-gulp.task('default',['connect','watch','js','html','css']);
+gulp.task('default',['connect','watch','html','js','css','browserify']);
